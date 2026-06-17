@@ -1,0 +1,26 @@
+# Identity → tier policy. The MCP server enforces this; the model never sees it.
+#
+# Tier semantics (also encoded per-tool below):
+#   1 = read
+#   2 = low-risk write (logged + executed)
+#   3 = high-risk write (defaults to shadow mode — simulated + logged)
+#   4 = critical write (requires human approval)
+
+identities:
+  viewer:
+    description: "Read-only analyst."
+    allowed_tiers: [1]
+  agent_basic:
+    description: "Routine support agent — can flag, cannot cancel/refund."
+    allowed_tiers: [1, 2]
+  agent_advanced:
+    description: "Senior agent — can run high-risk tools (in shadow) and request approvals."
+    allowed_tiers: [1, 2, 3, 4]
+
+tools:
+  list_recent_orders:       { tier: 1 }
+  get_order_details:        { tier: 1 }
+  flag_order_for_review:    { tier: 2 }
+  cancel_order:             { tier: 3, shadow_by_default: true }
+  issue_refund:             { tier: 4, approval_required: true }
+  assess_fraud_risk:        { tier: 1, multi_model: true }
