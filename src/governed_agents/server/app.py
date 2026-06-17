@@ -87,9 +87,12 @@ def check_approval(approval_id: str) -> dict:
 
 
 def _consume_orders() -> None:
+    # Unique group per startup so the ledger is always rebuilt from the topic start,
+    # regardless of what previous servers committed.
+    import uuid
     consumer = Consumer({
         "bootstrap.servers": SETTINGS.kafka_bootstrap,
-        "group.id": "orders-ingest-server",
+        "group.id": f"orders-ingest-{uuid.uuid4().hex[:8]}",
         "auto.offset.reset": "earliest",
         "enable.auto.commit": True,
     })

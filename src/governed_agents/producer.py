@@ -24,7 +24,9 @@ from confluent_kafka import Producer
 from .config import SETTINGS
 from .topics import ORDERS
 
-CUSTOMERS = [f"C{i:03d}" for i in range(1, 21)]
+# C010 is reserved for the fraud-scenario seed so its recent-orders view stays
+# undiluted by the steady-state stream. The agent always sees a clean fraud signal.
+CUSTOMERS = [f"C{i:03d}" for i in range(1, 21) if i != 10]
 ITEMS = [
     ("SKU-001", "Wireless Mouse", 29.99),
     ("SKU-002", "Mechanical Keyboard", 119.00),
