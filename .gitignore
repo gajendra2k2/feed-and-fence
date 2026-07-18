@@ -14,3 +14,10 @@ state/
 #   git add -f transcripts/canonical.json && git commit
 transcripts/
 !transcripts/canonical.json
+
+# Presentation drafts and IEEE-talk-specific working docs — local only.
+ABSTRACT.md
+PRESENTATION_PLAN.md
+*.pptx
+*.key
+DECK.md
