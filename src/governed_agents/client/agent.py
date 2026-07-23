@@ -220,7 +220,7 @@ async def run_agent(model: str, identity: str, goal: str, max_turns: int = 14) -
             try:
                 response = anthropic.messages.create(
                     model=model,
-                    max_tokens=2048,
+                    max_tokens=8192,
                     system=SYSTEM_PROMPT,
                     tools=tool_schemas,
                     messages=messages,
@@ -261,7 +261,13 @@ async def run_agent(model: str, identity: str, goal: str, max_turns: int = 14) -
                 "ts": datetime.now(timezone.utc).isoformat(),
             })
 
-            if response.stop_reason != "tool_use":
+            # Execute whatever tool_use blocks the model emitted, even if the
+            # response was cut off by max_tokens. The old check treated any
+            # non-tool_use stop_reason as "done" — but Opus can generate
+            # dozens of parallel tool_use blocks in one turn and hit the
+            # token ceiling mid-generation. Only break when there are truly
+            # no tools queued.
+            if not tool_uses:
                 final_summary = "\n".join(text_blocks).strip()
                 break
 
