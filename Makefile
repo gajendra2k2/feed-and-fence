@@ -18,6 +18,7 @@ up:
 
 down:
 	docker compose down -v
+	rm -rf state/
 
 logs:
 	docker compose logs -f kafka
