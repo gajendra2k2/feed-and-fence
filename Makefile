@@ -17,7 +17,8 @@ up:
 	@echo "Kafka ready."
 
 down:
-	docker compose down -v
+	docker compose down -v --remove-orphans
+	-docker rm -f governed-agents-kafka 2>/dev/null || true
 	rm -rf state/
 
 logs:
